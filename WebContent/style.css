@@ -1,0 +1,50 @@
+section#sec{
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    border: solid;
+    top: 20px;
+    background-color: dimgray;
+}
+button{
+    position: absolute;
+    left: 350px;
+    top: 440px;
+}
+button#bu{
+    position: absolute;
+    left: 410px;
+    top: 440px;
+}
+input{
+    position: absolute;
+
+    top: 440px;
+}
+div{
+    position: relative;
+    top: 20px;
+    width: 700px;
+    height: 500px;
+    border: solid;
+    left: 600px;
+}
+
+body{
+    background-image: url("imagenes/fondo.png");
+}
+
+img#galeria{
+	top:-100px;
+	width: 100px;
+    height: 100px;
+    bottom:0;
+    float: left;   
+}
+img#galeria2{
+	position: relative;
+	top:0;
+	width: 100px;
+    height: 100px;
+    float: left;   
+}

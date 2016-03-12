@@ -1,0 +1,177 @@
+<html>
+<head>
+    <script src="XHR.js"></script>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<script>
+    var archivo;
+    var resultado;
+    var div = document.createElement("div");
+    var canvas = document.createElement("canvas");
+    canvas.width=700;
+    canvas.height=400;
+    var ctx=canvas.getContext('2d');
+    var enviarbu = document.createElement("button");
+    var buscarbu = document.createElement("button");
+    var section = document.createElement("section");
+    var archivosbu = document.createElement("input");  
+    var datos=new FormData();
+    var cantidad = 0;
+
+
+    enviarbu.innerHTML="Enviar";
+    enviarbu.disabled=true;
+    archivosbu.type = "file";
+    archivosbu.multiple=true;
+    section.id="sec";
+    section.innerHTML = "arrastre hasta aqui";
+    buscarbu.innerHTML="Buscar";
+    buscarbu.id="bu";
+
+    section.addEventListener("dragenter",function(e){
+            e.preventDefault();
+        },false);
+    section.addEventListener("dragover",function(e){
+            e.preventDefault();
+        },false);
+    section.addEventListener("drop",soltado,false);
+    function soltado(e){
+
+        e.preventDefault();
+
+        
+        archivo = e.dataTransfer.files;
+        cantidad=archivo.length;
+        section.innerHTML="";
+        
+        var img = [];
+
+        for(var i = 0;i<archivo.length;i++){
+            datos.append('file'+String(i),archivo[i]);
+            
+            var lector2 = new FileReader;
+
+            lector2.onload = function(ev){
+                img[i]=document.createElement("img");
+                img[i].src=ev.target.result;
+                img[i].id="galeria";
+                section.appendChild(img[i]);
+            };
+
+            lector2.readAsDataURL(archivo[i]);
+        }
+
+        var lector = new FileReader;
+        
+        lector.onload = function(ev){
+            enviarbu.disabled=false;
+            resultado = ev.target.result;
+                      
+        };
+       
+        lector.readAsBinaryString(archivo[archivo.length-1]);
+
+  	}
+    function cargaBoton(e){
+        img=[];
+    	var archivo2 = e.target.files;
+        cantidad=archivo2.length;
+    	
+        section.innerHTML="";
+
+        for(var i = 0;i<archivo2.length;i++){
+            datos.append('file'+String(i),archivo2[i]);
+            
+            var lector2 = new FileReader;
+
+            lector2.onload = function(ev){
+                img[i]=document.createElement("img");
+                img[i].src=ev.target.result;
+                img[i].id="galeria";
+                section.appendChild(img[i]);
+            };
+
+            lector2.readAsDataURL(archivo2[i]);
+
+        }
+
+        var lector = new FileReader;
+        
+        lector.onload = function(ev){
+            enviarbu.disabled=false;
+            resultado = ev.target.result;
+            
+        };
+       
+        lector.readAsBinaryString(archivo2[archivo2.length-1]);
+    }
+	
+    archivosbu.addEventListener("change",cargaBoton,false);
+    div.appendChild(canvas);
+    document.body.appendChild(section);
+    document.body.appendChild(archivosbu);
+    document.body.appendChild(enviarbu);
+    document.body.appendChild(buscarbu);
+    document.body.appendChild(div);
+    
+    buscarbu.onclick=function(){
+    	traerTodas();
+    };
+
+    enviarbu.onclick = function(){
+
+
+		datos.append('nombre','andres');
+  		var solicitud=new XMLHttpRequest();    		  
+  		solicitud.open("POST","Servlet", true);
+  		solicitud.responseType =  "blob" ;
+  		
+  		solicitud.send(datos);
+  		
+        solicitud.onreadystatechange = function() {
+            if (solicitud.readyState == 4) {
+            	
+            	var img = document.createElement("img");
+            	img.src = window.URL.createObjectURL(solicitud.response);
+                img.id="res";
+                img.onload=function(){
+                	ctx.drawImage(img,0,0,700,400);
+                }
+            }
+        }
+    };
+
+    function traerTodas(){
+    	console.log("trayendo todas");
+        var img = [];
+
+        for(var i = 0;i<cantidad;i++){
+
+            var solicitud=new XMLHttpRequest();
+            solicitud.open("POST","Servlet", true);
+            solicitud.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+            var b = "cantidad="+cantidad+"&posicion="+i;
+            solicitud.send(b);
+            solicitud.responseType =  "blob" ;
+            solicitud.index=i;
+            solicitud.onreadystatechange = function() {
+                if (this.readyState == 4) {
+
+                	var img = document.createElement("img");
+					img.src = window.URL.createObjectURL(this.response);
+					img.id="galeria2";
+					div.appendChild(img);
+					img.onclick=function(){
+						ctx.drawImage(img,0,0,700,400);
+					}
+                }
+            }
+            
+        }
+    }
+ 
+</script>
+</body>
+</html>
